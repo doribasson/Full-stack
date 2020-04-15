@@ -95,3 +95,5 @@ router.post(
 );
 
 module.exports = router;
+
+//http://localhost:5000/api/users get in postman
