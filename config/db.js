@@ -8,8 +8,8 @@ const connectDB = async () => {
     await mongoose.connect(db, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true
-      // useFindAndModify: false
+      useCreateIndex: true,
+      useFindAndModify: false //to disable this msg from terminal DeprecationWarning: Mongoose: `findOneAndUpdate()` and `findOneAndDelete()` without the `useFindAndModify` option set to false are deprecated. See: https://mongoosejs.com/docs/deprecations.html#findandmodify
     });
     console.log("mongoDB Connected...");
   } catch (err) {

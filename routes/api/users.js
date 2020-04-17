@@ -94,6 +94,17 @@ router.post(
   }
 );
 
+router.get("/", async (req, res) => {
+  try {
+    // const users = await User.find().select("-password"); //show without password field
+    const users = await User.find(); //show with password field
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
 
 //http://localhost:5000/api/users get in postman
