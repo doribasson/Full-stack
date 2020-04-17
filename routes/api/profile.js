@@ -272,7 +272,7 @@ module.exports = router;
 // }
 
 //Add Experience to profile
-//http://localhost:5000/api/profile/experience   in psotman
+//http://localhost:5000/api/profile/experience  in psotman
 //for dori-bassson
 // x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
 //Content-Type - application/json
@@ -319,7 +319,7 @@ module.exports = router;
 // 	"githubusername": "https://github.com/doribasson/",
 // 	"twitter": "none",
 // 	"facebook": "none",
-// 	"youtube": "noneeeee"
+// 	"youtube": "noneeee"
 // }
 
 //Delete from Array Experience from Profile
