@@ -107,4 +107,26 @@ router.get("/", async (req, res) => {
 
 module.exports = router;
 
-//http://localhost:5000/api/users get in postman
+//Get all users
+//http://localhost:5000/api/users  get in postman
+
+//Login user
+//http://localhost:5000/api/auth
+//Content-Type - application/json
+// {
+// 	"email":"doribasson@gmail.com",
+// 	"password":"dori1234"
+// }
+
+//Register User
+//http://localhost:5000/api/users
+//Content-Type - application/json
+// {
+// 	"name":"dori basson",
+// 	"email":"doribasson99@gmail.com",
+// 	"password":"dori1234"
+// }
+
+//Get auth user
+//http://localhost:5000/api/auth
+// x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NmZmMGExZGU0NjQyYjE4OTJlODNhIn0sImlhdCI6MTU4Njk1Mzk5NCwiZXhwIjoxNTg3MzEzOTk0fQ.C5I47vVd0Fw_vIBnpE0YTXEgzhct6Yk8CFse1kyuIWs

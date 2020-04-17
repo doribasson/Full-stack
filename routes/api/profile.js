@@ -170,6 +170,86 @@ router.delete("/", auth, async (req, res) => {
   }
 });
 
+//@route    Put api/profile/experience
+//@desc     Add profile experience
+//@access   Private
+router.put(
+  "/experience",
+  [
+    auth,
+    [
+      check("title", "Title is required")
+        .not()
+        .isEmpty(),
+      check("company", "Company is required")
+        .not()
+        .isEmpty(),
+      check("from", "From date is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    } = req.body;
+
+    const newExp = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.experience.unshift(newExp);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+//@route    Delete api/profile/experience/:exp_id
+//@desc     DElete experience from profile
+//@access   Private
+router.delete("/experience/:exp_id", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    //Get remove index
+    const removeIndex = profile.experience
+      .map(item => item.id)
+      .indexOf(req.params.exp_id);
+    profile.experience.splice(removeIndex, 1);
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
 
 //http://localhost:5000/api/profile/me
@@ -190,3 +270,59 @@ module.exports = router;
 // 	"facebook": "none",
 // 	"youtube": "none"
 // }
+
+//Add Experience to profile
+//http://localhost:5000/api/profile/experience   in psotman
+//for dori-bassson
+// x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+//Content-Type - application/json
+
+//Put - Add experience to Profile
+// x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+//Content-Type - application/json
+//body raw
+//{
+// 	"title": "Developer",
+// 	"company": "Dori Media",
+// 	"location": "Yavne, IL",
+// 	"from": "4-17-2020",
+// 	"current": true,
+// 	"description": "Create experience"
+// }
+
+//Delete profile & user
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5OWExMDNhNjZkODk4MWI4ZGQ0ZDIwIn0sImlhdCI6MTU4NzEyNjUzMiwiZXhwIjoxNTg3NDg2NTMyfQ.CnfeJlavAqugACqsz4jP0A_IgSUSs71mhfF92nacLN4
+
+//Get profile by user ID
+//http://localhost:5000/api/profile/user/{$id}
+//http://localhost:5000/api/profile/user/5e976f1da365261708240d9e - dori
+//http://localhost:5000/api/profile/user/5e98b90d0e8138366c39603c - ordit
+
+//Get all profiles
+//http://localhost:5000/api/profile
+
+//Get logged in users profile
+//http://localhost:5000/api/profile/me
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+
+//Create and update profile
+//http://localhost:5000/api/profile
+//Content-Type - application/json
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+// //body - {
+// 	"company": "Dori-Media",
+// 	"status": "Developer",
+// 	"skills": "HTML, CSS, REACT, Nodejs, JS",
+// 	"website": "https://dori-new.herokuapp.com/",
+// 	"location": "Yavne, IL",
+// 	"bio": "i am a developer for dori-media",
+// 	"githubusername": "https://github.com/doribasson/",
+// 	"twitter": "none",
+// 	"facebook": "none",
+// 	"youtube": "noneeeee"
+// }
+
+//Delete from Array Experience from Profile
+// http://localhost:5000/api/profile/experience/${_id}
+// http://localhost:5000/api/profile/experience/5e99d05e4657fc0e8c164273
+// x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4NzEzODkxNCwiZXhwIjoxNTg3NDk4OTE0fQ.7CAo755MlcBequcXT2FVEWiGgG6ttTh7mjv_cE0a4GE
