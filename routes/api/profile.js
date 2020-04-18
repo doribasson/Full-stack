@@ -250,6 +250,89 @@ router.delete("/experience/:exp_id", auth, async (req, res) => {
   }
 });
 
+//@route    Put api/profile/education
+//@desc     Add profile education
+//@access   Private
+router.put(
+  "/education",
+  [
+    auth,
+    [
+      check("school", "School is required")
+        .not()
+        .isEmpty(),
+      check("degree", "Degree is required")
+        .not()
+        .isEmpty(),
+      check("fieldofstudy", "Field of study is required")
+        .not()
+        .isEmpty(),
+      check("from", "From date is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description
+    } = req.body;
+
+    const newEdu = {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.education.unshift(newEdu);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+//@route    Delete api/profile/eduication/:edu_id
+//@desc     DElete eduication from profile
+//@access   Private
+router.delete("/education/:edu_id", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    //Get remove index
+    const removeIndex = profile.education
+      .map(item => item.id)
+      .indexOf(req.params.edu_id);
+    profile.education.splice(removeIndex, 1);
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
 
 //http://localhost:5000/api/profile/me
@@ -326,3 +409,22 @@ module.exports = router;
 // http://localhost:5000/api/profile/experience/${_id}
 // http://localhost:5000/api/profile/experience/5e99d05e4657fc0e8c164273
 // x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4NzEzODkxNCwiZXhwIjoxNTg3NDk4OTE0fQ.7CAo755MlcBequcXT2FVEWiGgG6ttTh7mjv_cE0a4GE
+
+//Put - Add eduction to Profile
+//http://localhost:5000/api/profile/education
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+//Content-Type - application/json
+//body
+// {
+// 	"school": "Ginsburg haoren",
+// 	"degree": "cs Degree",
+// 	"fieldofstudy": "Computer Science",
+// 	"from": "4-17-2017",
+// 	"to": "3-31-2019",
+// 	"description": "Graduated B.sc "
+// }
+
+//Delete from Array Education from Profile
+//http://localhost:5000/api/profile/education/${id}
+//http://localhost:5000/api/profile/education/5e9b558eaa6e72791011c197
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4NzEzODkxNCwiZXhwIjoxNTg3NDk4OTE0fQ.7CAo755MlcBequcXT2FVEWiGgG6ttTh7mjv_cE0a4GE
