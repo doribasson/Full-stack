@@ -165,6 +165,85 @@ router.put("/unlike/:id", auth, async (req, res) => {
   }
 });
 
+//@route    Post api/posts/comment/:id
+//@desc     Comment om a post
+//@access   Private
+router.post(
+  "/comment/:id",
+  [
+    auth,
+    [
+      check("text", "Text is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const user = await User.findById(req.user.id).select("-password");
+      const post = await Post.findById(req.params.id);
+
+      const newComment = {
+        text: req.body.text, //come from the body
+        name: user.name, //come from user
+        avatar: user.avatar, //come from user
+        user: req.user.id // //come from user we need the ObjectID
+      };
+
+      post.comments.unshift(newComment);
+
+      await post.save();
+      res.json(post.comments);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+//@route    Delete api/posts/comment/:id/:comment_id   //:id -because we need to find the post by id , :comment_id  - and we need to know witch comment to delete
+//@desc     Delete comment om
+//@access   Private
+router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    //pull out comment
+    const comment = post.comments.find(
+      comment => comment.id === req.params.comment_id
+    );
+
+    //Make sure comment exists
+    if (!comment) {
+      return res.status(404).json({ msg: "Comment does not exist" });
+    }
+
+    //Check user
+    if (comment.user.toString() !== req.user.id) {
+      //req.user.id - the login user ,  comment.user - the ObjectId user and we want be string for check !==
+      return res.status(401).json({ msg: "User not authorized" });
+    }
+
+    //Get remove index for delete the like //currect comment to remove
+    const removeIndex = post.comments
+      .map(comment => comment.user.toString())
+      .indexOf(req.user.id);
+    post.comments.splice(removeIndex, 1);
+
+    await post.save();
+
+    res.json(post.comments); //the _id: is the actully like  user:the user that liked that
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
 
 //Get - all posts
@@ -199,4 +278,18 @@ module.exports = router;
 //Put -Unlike a post  - because we change the post.. the like inside the post
 //http://localhost:5000/api/posts/unlike/${id-for-want-to-liked}
 //http://localhost:5000/api/posts/unlike/5e9c24baf78ef0551006bb17
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+
+//Post - add Comment
+//http://localhost:5000/api/posts/comment/5e9c22f3f78ef0551006bb16
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+//Content-Type - application/json
+//body
+// {
+// 	"text": "Ty, great post!"
+// }
+
+//Delete comment from Comment-array in posts
+//http://localhost:5000/api/posts/comment/5e9c22f3f78ef0551006bb16/5e9c65961d2f6947d4f42375
+//http://localhost:5000/api/posts/comment/${id-post}/{id-comment-delete}
 //x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
