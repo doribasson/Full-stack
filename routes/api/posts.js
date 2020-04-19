@@ -110,6 +110,61 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
+//@route    Put api/posts/like/:id  //because we updateing a post
+//@desc     Like a post
+//@access   Private
+router.put("/like/:id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    //Check if the post has already been liked
+    if (
+      post.likes.filter(like => like.user.toString() === req.user.id).length > 0
+    ) {
+      return res.status(400).json({ msg: "Post already liked" });
+    }
+
+    post.likes.unshift({ user: req.user.id }); //that user that like that
+
+    await post.save();
+
+    res.json(post.likes); //the _id: is the actully like  user:the user that liked that
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+//@route    Put api/posts/unlike/:id  //because we updateing a post
+//@desc     Unlike a post
+//@access   Private
+router.put("/unlike/:id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    //Check if the post has already been liked
+    if (
+      post.likes.filter(like => like.user.toString() === req.user.id).length ===
+      0
+    ) {
+      return res.status(400).json({ msg: "Post has not yes been liked" });
+    }
+
+    //Get remove index for delete the like //currect like to remove
+    const removeIndex = post.likes
+      .map(like => like.user.toString())
+      .indexOf(req.user.id);
+    post.likes.splice(removeIndex, 1);
+
+    await post.save();
+
+    res.json(post.likes); //the _id: is the actully like  user:the user that liked that
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
 
 //Get - all posts
@@ -134,4 +189,14 @@ module.exports = router;
 //Delete post by id
 //http://localhost:5000/api/posts/${id}
 //http://localhost:5000/api/posts/5e9c30bfb64a2350843701ce
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+
+//Put - Give a like  - because we change the post.. the like inside the post
+//http://localhost:5000/api/posts/like/${id-for-want-to-liked}
+//http://localhost:5000/api/posts/like/5e9c24baf78ef0551006bb17
+//x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
+
+//Put -Unlike a post  - because we change the post.. the like inside the post
+//http://localhost:5000/api/posts/unlike/${id-for-want-to-liked}
+//http://localhost:5000/api/posts/unlike/5e9c24baf78ef0551006bb17
 //x-auth-token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWU5NzZmMWRhMzY1MjYxNzA4MjQwZDllIn0sImlhdCI6MTU4Njk4Nzc4MSwiZXhwIjoxNTg3MzQ3NzgxfQ.KAbfHndcNUbb6j-O9TLyYChQUhBCdD-dal-NtO9s_qQ
