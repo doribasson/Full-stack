@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,12 +16,30 @@ const Register = () => {
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value }); //for every field
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault();
     if (password !== password2) {
       console.log("Password do not match");
     } else {
-      console.log("SUCCESS");
+      const newUser = {
+        name, //like name:name
+        email,
+        password
+      };
+      try {
+        const config = {
+          //because we send data we want create config object that has headers
+          headers: {
+            "Content-Type": "application/json"
+          }
+        };
+        const body = JSON.stringify(newUser); //now we have body to send
+
+        const res = await axios.post("/api/users", body, config); //no need localhost:5000 because the proxy at package.json.. the body is data that we send .. config has the header value
+        console.log(res.data);
+      } catch (err) {
+        console.error(err.response.data);
+      }
     }
   };
 
