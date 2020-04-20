@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { setAlert } from "../../actions/alert";
 import { register } from "../../actions/auth";
 import PropTypes from "prop-types";
@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 //const Register = (props) => {props.SetAlert("Password do not match", "danger");
 //const Register = () => {this.props.SetAlert("Password do not match", "danger");
 
-const Register = ({ setAlert, register }) => {
+const Register = ({ setAlert, register, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,6 +31,10 @@ const Register = ({ setAlert, register }) => {
       register({ name, email, password });
     }
   };
+
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
 
   return (
     <Fragment>
@@ -94,7 +98,14 @@ const Register = ({ setAlert, register }) => {
 
 Register.propTypes = {
   setAlert: PropTypes.func.isRequired, //ptfr+tab shortcut
-  register: PropTypes.func.isRequired
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
 };
 
-export default connect(null, { setAlert, register })(Register);
+const mapStateToProps = state => ({
+  // auth: state.auth //give use all the state object in the reducer auth.js.. token,isAuthenticated,loading,user
+
+  isAuthenticated: state.auth.isAuthenticated ////but we need just the isAuthenticated state.. check this value if is Authenticate
+});
+
+export default connect(mapStateToProps, { setAlert, register })(Register);
