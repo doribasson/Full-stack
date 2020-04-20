@@ -28,3 +28,9 @@ app.use("/api/posts", require("./routes/api/posts"));
 const PORT = process.env.PORT || 5000; //locally 5000 and heroku PORT http://localhost:5000/ or in get postman
 
 app.listen(PORT, () => console.log(`server started on porn ${PORT}`));
+
+// 1.new file create filte .gitignote
+// 2.inside .gitignote -> node_modules/
+// 3.git init -> for reository
+// 4.npm init
+// 5.npm i express express-validator bcryptjs config gravatar jsonwebtoken mongoose request
