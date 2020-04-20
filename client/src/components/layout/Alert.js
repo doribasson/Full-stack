@@ -16,7 +16,7 @@ Alert.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  alerts: state.alert
+  alerts: state.alert //get the state from reducer
 });
 
 export default connect(mapStateToProps)(Alert);
