@@ -6,8 +6,10 @@ import Landing from "./components/layout/Landing";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Alert from "./components/layout/Alert";
+import Dashboard from "./components/dashboard/Dashboard";
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utills/setAuthToken";
+import PrivateRoute from "./components/routing/PrivateRoute";
 //Redux
 import { Provider } from "react-redux";
 import store from "./store";
@@ -34,6 +36,12 @@ const App = () => {
             <Switch>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
+              {/* PrivateRoute-  if we are not Authenticated and not loading so we go to Login page (PrivateRoute), else we go to component that come in prop..like dashboard 
+              and if we type in the url  http://localhost:3000/dashboard he will not take us to dashboard and he take use to login  */}
+              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              {/* Route - if we are not login and we type in the url http://localhost:3000/dashboard
+              he will take us to dashboard and its worng because we are not log in Authenticated
+              <Route exact path="/dashboard" component={Dashboard} /> */}
             </Switch>
           </section>
         </Fragment>
