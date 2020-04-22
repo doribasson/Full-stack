@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setAlert } from "./alert";
 
-import { Get_PROFILE, PROFILE_ERROR, GET_PROFILE } from "./types";
+import { PROFILE_ERROR, GET_PROFILE } from "./types";
 
 //Get current users profile
 export const getCurrentProfile = () => async dispatch => {
@@ -15,7 +15,12 @@ export const getCurrentProfile = () => async dispatch => {
   } catch (err) {
     dispatch({
       type: PROFILE_ERROR,
-      payload: { msg: err.response.statusText, status: err.response.status }
+      // payload: console.log(err.response)
+      payload: {
+        msg: err.response.statusText, //Bad Request
+        status: err.response.status, //400
+        msg2: err.response.data //there is no profile for this user
+      }
     });
   }
 };
