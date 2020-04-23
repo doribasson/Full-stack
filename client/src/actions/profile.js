@@ -48,7 +48,7 @@ export const createProfile = (
       payload: res.data
     });
 
-    dispach(setAlert(edit ? "Profile Updated" : "Profile Created", "succes"));
+    dispach(setAlert(edit ? "Profile Updated" : "Profile Created", "success"));
 
     //if not edit so ceate new profile
     if (!edit) {

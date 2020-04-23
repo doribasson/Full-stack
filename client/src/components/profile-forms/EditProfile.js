@@ -1,11 +1,16 @@
 //racfp+tab
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom"; //withRouter - for pass the history object in.. allow us to redirect from the action
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { createProfile } from "../../actions/profile";
+import { createProfile, getCurrentProfile } from "../../actions/profile";
 
-const CreateProfile = ({ createProfile, history }) => {
+const EditProfile = ({
+  profile: { profile, loading },
+  createProfile,
+  getCurrentProfile,
+  history
+}) => {
   const [formData, setFormData] = useState({
     company: "",
     website: "",
@@ -22,6 +27,26 @@ const CreateProfile = ({ createProfile, history }) => {
   });
 
   const [displaySocialInputs, toggleSocialInputs] = useState(false); //toggle
+
+  useEffect(() => {
+    getCurrentProfile();
+    //after GetProfile we Check if loading or not have company black field else if not loading and there is company then field it
+    setFormData({
+      company: loading || !profile.company ? "" : profile.company,
+      website: loading || !profile.website ? "" : profile.website,
+      location: loading || !profile.location ? "" : profile.location,
+      status: loading || !profile.status ? "" : profile.status,
+      skills: loading || !profile.skills ? "" : profile.skills.join(","),
+      githubusername:
+        loading || !profile.githubusername ? "" : profile.githubusername,
+      bio: loading || !profile.bio ? "" : profile.bio,
+      twitter: loading || !profile.social ? "" : profile.social.twitter, //check if there is social object
+      facebook: loading || !profile.social ? "" : profile.social.facebook,
+      linkedin: loading || !profile.social ? "" : profile.social.linkedin,
+      youtube: loading || !profile.social ? "" : profile.social.youtube,
+      instagram: loading || !profile.social ? "" : profile.social.instagram
+    });
+  }, [loading]); //just when is load i want this to run
 
   const {
     company,
@@ -43,7 +68,7 @@ const CreateProfile = ({ createProfile, history }) => {
 
   const onSubmit = e => {
     e.preventDefault();
-    createProfile(formData, history); //history destructure is like props.history.. comes from action/profile
+    createProfile(formData, history, true); //history destructure is like props.history.. comes from action/profile .. true - for edit and not create
   };
 
   return (
@@ -183,7 +208,7 @@ const CreateProfile = ({ createProfile, history }) => {
                 type="text"
                 placeholder="YouTube URL"
                 name="youtube"
-                value={youtube}
+                value={youtube || ""}
                 onChange={e => onChange(e)}
               />
             </div>
@@ -194,7 +219,7 @@ const CreateProfile = ({ createProfile, history }) => {
                 type="text"
                 placeholder="Linkedin URL"
                 name="linkedin"
-                value={linkedin}
+                value={linkedin || ""}
                 onChange={e => onChange(e)}
               />
             </div>
@@ -205,7 +230,7 @@ const CreateProfile = ({ createProfile, history }) => {
                 type="text"
                 placeholder="Instagram URL"
                 name="instagram"
-                value={instagram}
+                value={instagram || ""}
                 onChange={e => onChange(e)}
               />
             </div>
@@ -221,8 +246,16 @@ const CreateProfile = ({ createProfile, history }) => {
   );
 };
 
-CreateProfile.prototype = {
-  createProfile: PropTypes.func.isRequired
+EditProfile.prototype = {
+  createProfile: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
-export default connect(null, { createProfile })(withRouter(CreateProfile)); //withRouter because the hostory..allow to pass an history object in used from the action
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
+export default connect(mapStateToProps, { createProfile, getCurrentProfile })(
+  withRouter(EditProfile)
+); //withRouter because the hostory..allow to pass an history object in used from the action

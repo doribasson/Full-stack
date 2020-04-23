@@ -10,6 +10,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utills/setAuthToken";
 import CreateProfile from "./components/profile-forms/CreateProfile";
+import EditProfile from "./components/profile-forms/EditProfile";
 import PrivateRoute from "./components/routing/PrivateRoute";
 //Redux
 import { Provider } from "react-redux";
@@ -44,6 +45,12 @@ const App = () => {
                 exact
                 path="/create-profile"
                 component={CreateProfile}
+              />
+
+              <PrivateRoute
+                exact
+                path="/edit-profile"
+                component={EditProfile}
               />
               {/* Route - if we are not login and we type in the url http://localhost:3000/dashboard
               he will take us to dashboard and its worng because we are not log in Authenticated
