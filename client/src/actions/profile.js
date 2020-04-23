@@ -24,3 +24,47 @@ export const getCurrentProfile = () => async dispatch => {
     });
   }
 };
+
+//Create or update profile
+//we want redirect after submitted the form and in action we use in history and not <Redirect>
+//history - object has method call push that redirect us to a client side route
+//edit - to know if we updateing or editing profile or create new profile,
+export const createProfile = (
+  formData,
+  history,
+  edit = false
+) => async dispach => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const res = await axios.post("/api/profile", formData, config);
+
+    dispach({
+      type: GET_PROFILE,
+      payload: res.data
+    });
+
+    dispach(setAlert(edit ? "Profile Updated" : "Profile Created", "succes"));
+
+    //if not edit so ceate new profile
+    if (!edit) {
+      history.push("/dashboard");
+    }
+  } catch (err) {
+    //validation errors with alert
+    const errors = err.response.data.errors;
+    //if forget the status or skills or other that require field then that will show in an alert
+    if (errors) {
+      errors.forEach(error => dispach(setAlert(error.msg, "danger")));
+    }
+
+    dispach({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};

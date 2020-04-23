@@ -1,9 +1,11 @@
 //racfp+tab
 import React, { Fragment, useState } from "react";
+import { Link, withRouter } from "react-router-dom"; //withRouter - for pass the history object in.. allow us to redirect from the action
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { createProfile } from "../../actions/profile";
 
-const CreateProfile = props => {
+const CreateProfile = ({ createProfile, history }) => {
   const [formData, setFormData] = useState({
     company: "",
     website: "",
@@ -38,6 +40,12 @@ const CreateProfile = props => {
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = e => {
+    e.preventDefault();
+    createProfile(formData, history); //history destructure is like props.history.. comes from action/profile
+  };
+
   return (
     <Fragment>
       <h1 className="large text-primary">Create Your Profile</h1>
@@ -46,7 +54,7 @@ const CreateProfile = props => {
         profile stand out
       </p>
       <small>* = required field</small>
-      <form className="form">
+      <form className="form" onSubmit={e => onSubmit(e)}>
         <div className="form-group">
           <select name="status" value={status} onChange={e => onChange(e)}>
             <option value="0">* Select Professional Status</option>
@@ -209,17 +217,12 @@ const CreateProfile = props => {
           Go Back
         </a>
       </form>
-      <button
-        onClick={() => console.log(company)} // like formData.company because destructure
-        type="button"
-        className="btn btn-primary my-1"
-      >
-        check the company value
-      </button>
     </Fragment>
   );
 };
 
-CreateProfile.prototype = {};
+CreateProfile.prototype = {
+  createProfile: PropTypes.func.isRequired
+};
 
-export default CreateProfile;
+export default connect(null, { createProfile })(withRouter(CreateProfile)); //withRouter because the hostory..allow to pass an history object in used from the action
