@@ -9,6 +9,7 @@ import Alert from "./components/layout/Alert";
 import Dashboard from "./components/dashboard/Dashboard";
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utills/setAuthToken";
+import CreateProfile from "./components/profile-forms/CreateProfile";
 import PrivateRoute from "./components/routing/PrivateRoute";
 //Redux
 import { Provider } from "react-redux";
@@ -39,6 +40,11 @@ const App = () => {
               {/* PrivateRoute-  if we are not Authenticated and not loading so we go to Login page (PrivateRoute), else we go to component that come in prop..like dashboard 
               and if we type in the url  http://localhost:3000/dashboard he will not take us to dashboard and he take use to login  */}
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute
+                exact
+                path="/create-profile"
+                component={CreateProfile}
+              />
               {/* Route - if we are not login and we type in the url http://localhost:3000/dashboard
               he will take us to dashboard and its worng because we are not log in Authenticated
               <Route exact path="/dashboard" component={Dashboard} /> */}
