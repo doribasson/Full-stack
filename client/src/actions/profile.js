@@ -1,7 +1,13 @@
 import axios from "axios";
 import { setAlert } from "./alert";
 
-import { PROFILE_ERROR, GET_PROFILE, UPDATE_PROFILE } from "./types";
+import {
+  PROFILE_ERROR,
+  GET_PROFILE,
+  UPDATE_PROFILE,
+  CLEAR_PROFILE,
+  ACCOUNT_DELETED
+} from "./types";
 
 //Get current users profile
 export const getCurrentProfile = () => async dispatch => {
@@ -136,5 +142,63 @@ export const addEducation = (formData, history) => async dispach => {
       type: PROFILE_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
+  }
+};
+
+//Delete experience
+export const deleteExperience = id => async dispach => {
+  try {
+    const res = await axios.delete(`/api/profile/experience/${id}`);
+
+    dispach({
+      type: UPDATE_PROFILE,
+      payload: res.data
+    });
+
+    dispach(setAlert("Experience Removed", "success"));
+  } catch (err) {
+    dispach({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+//Delete education
+export const deleteEducation = id => async dispach => {
+  try {
+    const res = await axios.delete(`/api/profile/education/${id}`);
+
+    dispach({
+      type: UPDATE_PROFILE,
+      payload: res.data
+    });
+
+    dispach(setAlert("Education Removed", "success"));
+  } catch (err) {
+    dispach({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+//Delete account & profile
+//will know the account to delete from the token
+export const deleteAccount = () => async dispach => {
+  if (window.confirm("Are you sure? This can NOT be undone!")) {
+    try {
+      const res = await axios.delete("/api/profile");
+
+      dispach({ type: CLEAR_PROFILE });
+      dispach({ type: ACCOUNT_DELETED });
+
+      dispach(setAlert("Your account has been permanatly deleted"));
+    } catch (err) {
+      dispach({
+        type: PROFILE_ERROR,
+        payload: { msg: err.response.statusText, status: err.response.status }
+      });
+    }
   }
 };
