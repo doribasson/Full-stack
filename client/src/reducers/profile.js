@@ -1,4 +1,9 @@
-import { GET_PROFILE, PROFILE_ERROR, CLEAR_PROFILE } from "../actions/types";
+import {
+  GET_PROFILE,
+  PROFILE_ERROR,
+  CLEAR_PROFILE,
+  UPDATE_PROFILE
+} from "../actions/types";
 
 const initialState = {
   profile: null, //when we login it will make request and get all profile date and put here also if we visit anther user profile page he will put there well... both set data get put there because there are indvidual profile
@@ -13,6 +18,7 @@ export default function(state = initialState, action) {
 
   switch (type) {
     case GET_PROFILE:
+    case UPDATE_PROFILE:
       return {
         ...state,
         profile: payload,

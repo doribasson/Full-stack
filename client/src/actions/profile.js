@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setAlert } from "./alert";
 
-import { PROFILE_ERROR, GET_PROFILE } from "./types";
+import { PROFILE_ERROR, GET_PROFILE, UPDATE_PROFILE } from "./types";
 
 //Get current users profile
 export const getCurrentProfile = () => async dispatch => {
@@ -58,6 +58,76 @@ export const createProfile = (
     //validation errors with alert
     const errors = err.response.data.errors;
     //if forget the status or skills or other that require field then that will show in an alert
+    if (errors) {
+      errors.forEach(error => dispach(setAlert(error.msg, "danger")));
+    }
+
+    dispach({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+//Add Experience
+//history - because i want to redirect back to the Dashboard afterward
+export const addExperience = (formData, history) => async dispach => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json" //because we sending data
+      }
+    };
+
+    const res = await axios.put("/api/profile/experience", formData, config);
+
+    dispach({
+      type: UPDATE_PROFILE,
+      payload: res.data
+    });
+
+    dispach(setAlert("Experience Added", "success"));
+
+    history.push("/dashboard");
+  } catch (err) {
+    //validation errors with alert
+    const errors = err.response.data.errors;
+    //if forget require field then that will show in an alert
+    if (errors) {
+      errors.forEach(error => dispach(setAlert(error.msg, "danger")));
+    }
+
+    dispach({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+//Add Education
+//history - because i want to redirect back to the Dashboard afterward
+export const addEducation = (formData, history) => async dispach => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json" //because we sending data
+      }
+    };
+
+    const res = await axios.put("/api/profile/education", formData, config);
+
+    dispach({
+      type: UPDATE_PROFILE,
+      payload: res.data
+    });
+
+    dispach(setAlert("Education Added", "success"));
+
+    history.push("/dashboard");
+  } catch (err) {
+    //validation errors with alert
+    const errors = err.response.data.errors;
+    //if forget require field then that will show in an alert
     if (errors) {
       errors.forEach(error => dispach(setAlert(error.msg, "danger")));
     }
