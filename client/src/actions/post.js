@@ -1,5 +1,6 @@
 import axios from "axios";
-import { GET_POSTS, POST_ERROR, UPDATE_LIKES } from "./types";
+import { GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST } from "./types";
+import { setAlert } from "../actions/alert";
 
 // Get posts
 export const getPosts = () => async dispatch => {
@@ -49,5 +50,26 @@ export const removeLike = id => async dispatch => {
       type: POST_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
+  }
+};
+
+//Delete Post
+export const deletePost = id => async dispatch => {
+  if (window.confirm("Are you sure you want to delete the post?")) {
+    try {
+      await axios.delete(`/api/posts/${id}`);
+
+      dispatch({
+        type: DELETE_POST,
+        payload: id //id = just id so that in the reducer we know how to filter out the posts that got deleted from the UI
+      });
+
+      dispatch(setAlert("Post Removed", "success"));
+    } catch (err) {
+      dispatch({
+        type: POST_ERROR,
+        payload: { msg: err.response.statusText, status: err.response.status }
+      });
+    }
   }
 };
