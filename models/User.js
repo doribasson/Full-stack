@@ -19,9 +19,10 @@ const UserSchema = new mongoose.Schema(
       type: String //attch profile to your email
     },
     date: {
-      type: String,
-      default: new Date().toDateString() + " " + new Date().toLocaleTimeString()
-      // default: Date.now //automatic current time
+      // type: String,
+      type: Date,
+      // default: new Date().toDateString() + " " + new Date().toLocaleTimeString()
+      default: Date.now //automatic current time
       // default: () => new Date().toLocaleString("he-IL", { timeZone: "GMT" })
       // default: () => new Date().toLocaleString("he-IL", { timeZone: "GMT" })
       // default: () => new Date().toTimeString()

@@ -107,10 +107,10 @@ const ProfileSchema = new mongoose.Schema({
     }
   },
   date: {
-    type: String,
-    default: new Date().toDateString() + " " + new Date().toLocaleTimeString()
-    // type: Date,
-    // default: Date.now
+    // type: String,
+    // default: new Date().toDateString() + " " + new Date().toLocaleTimeString()
+    type: Date,
+    default: Date.now
   }
 });
 

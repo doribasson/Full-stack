@@ -42,15 +42,19 @@ const PostSchema = new Schema({
         type: String
       },
       date: {
-        type: String,
-        default:
-          new Date().toDateString() + " " + new Date().toLocaleTimeString()
+        type: Date,
+        default: Date.now()
       }
+      // date: {
+      //   type: String,
+      //   default:
+      //     new Date().toDateString() + " " + new Date().toLocaleTimeString()
+      // }
     }
   ],
   date: {
-    type: String,
-    default: new Date().toDateString() + " " + new Date().toLocaleTimeString()
+    type: Date,
+    default: Date.now
   }
 });
 
