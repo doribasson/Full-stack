@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -10,7 +10,8 @@ const PostItem = ({
   removeLike,
   deletePost,
   auth,
-  post: { _id, text, name, avatar, user, likes, comments, date }
+  post: { _id, text, name, avatar, user, likes, comments, date },
+  showActions
 }) => (
   <div className="post bg-white p-1 my-1">
     <div>
@@ -30,40 +31,48 @@ const PostItem = ({
       <p className="post-date">
         <Moment format="DD/MM/YY">{date}</Moment>
       </p>
-      <button
-        onClick={e => addLike(_id)}
-        type="button"
-        className="btn btn-light"
-      >
-        <i className="fas fa-thumbs-up" />{" "}
-        <span>{likes.length > 0 && <span>{likes.length}</span>}</span>
-      </button>
-      <button
-        onClick={e => removeLike(_id)}
-        type="button"
-        className="btn btn-light"
-      >
-        <i className="fas fa-thumbs-down"></i>
-      </button>
-      <Link to={`/post/${_id}`} className="btn btn-primary">
-        Discussion{" "}
-        {comments.length > 0 && (
-          <span className="comment-count">{comments.length}</span>
-        )}
-      </Link>
-      {/* user - is the post user .. auth.user._id - is the loged in user* we want to see if those match .. if match we what to show the button*/}
-      {!auth.loading && user === auth.user._id && (
-        <button
-          onClick={e => deletePost(_id)}
-          type="button"
-          className="btn btn-danger"
-        >
-          <i className="fas fa-times"></i>
-        </button>
+      {showActions && (
+        <Fragment>
+          <button
+            onClick={e => addLike(_id)}
+            type="button"
+            className="btn btn-light"
+          >
+            <i className="fas fa-thumbs-up" />{" "}
+            <span>{likes.length > 0 && <span>{likes.length}</span>}</span>
+          </button>
+          <button
+            onClick={e => removeLike(_id)}
+            type="button"
+            className="btn btn-light"
+          >
+            <i className="fas fa-thumbs-down"></i>
+          </button>
+          <Link to={`/posts/${_id}`} className="btn btn-primary">
+            Discussion{" "}
+            {comments.length > 0 && (
+              <span className="comment-count">{comments.length}</span>
+            )}
+          </Link>
+          {/* user - is the post user .. auth.user._id - is the loged in user* we want to see if those match .. if match we what to show the button*/}
+          {!auth.loading && user === auth.user._id && (
+            <button
+              onClick={e => deletePost(_id)}
+              type="button"
+              className="btn btn-danger"
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          )}
+        </Fragment>
       )}
     </div>
   </div>
 );
+
+PostItem.defaultProps = {
+  showActions: true
+};
 
 PostItem.propTypes = {
   post: PropTypes.object.isRequired,
