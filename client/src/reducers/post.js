@@ -1,4 +1,4 @@
-import { GET_POSTS, POST_ERROR } from "../actions/types";
+import { GET_POSTS, POST_ERROR, UPDATE_LIKES } from "../actions/types";
 
 const initialState = {
   posts: [],
@@ -20,6 +20,16 @@ export default function(state = initialState, action) {
       return {
         ...state,
         error: payload, //come from actions posts.js file
+        loading: false
+      };
+    case UPDATE_LIKES:
+      return {
+        ...state,
+        posts: state.posts.map(
+          post =>
+            //foreach post - if the post_id ===payload.id .. if equal the correct post that adding or removeing like so,  returning the post with the mnipulate(add/remove) array likes
+            post._id === payload.id ? { ...post, likes: payload.likes } : post //: else just return post without changeing the likes
+        ),
         loading: false
       };
     default:
