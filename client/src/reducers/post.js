@@ -4,7 +4,9 @@ import {
   POST_ERROR,
   UPDATE_LIKES,
   DELETE_POST,
-  ADD_POST
+  ADD_POST,
+  ADD_COMMENT,
+  REMOVE_COMMENT
 } from "../actions/types";
 
 const initialState = {
@@ -56,6 +58,24 @@ export default function(state = initialState, action) {
             //foreach post - if the post_id ===payload.id .. if equal the correct post that adding or removeing like so,  returning the post with the mnipulate(add/remove) array likes
             post._id === payload.id ? { ...post, likes: payload.likes } : post //: else just return post without changeing the likes
         ),
+        loading: false
+      };
+    case ADD_COMMENT:
+      return {
+        ...state,
+        post: { ...state.post, comments: payload }, //payload = all the comments
+        loading: false
+      };
+    case REMOVE_COMMENT:
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          //we want all comment except that one in the payload
+          comments: state.post.comments.filter(
+            comment => comment._id !== payload
+          )
+        },
         loading: false
       };
     default:
