@@ -21,15 +21,13 @@ export const getCurrentProfile = () => async dispatch => {
       payload: res.data
     });
   } catch (err) {
-    dispatch({ type: CLEAR_PROFILE });
-
     dispatch({
       type: PROFILE_ERROR,
       // payload: console.log(err.response)
       payload: {
         msg: err.response.statusText, //Bad Request
-        status: err.response.status //400
-        // msg2: err.response.data //there is no profile for this user
+        status: err.response.status, //400
+        msg2: err.response.data //there is no profile for this user
       }
     });
   }

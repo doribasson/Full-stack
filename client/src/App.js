@@ -15,6 +15,7 @@ import AddExperience from "./components/profile-forms/AddExperience";
 import AddEducation from "./components/profile-forms/AddEducation";
 import Profiles from "./components/profiles/Profiles";
 import Profile from "./components/profile/Profile";
+import Posts from "./components/posts/Posts";
 import PrivateRoute from "./components/routing/PrivateRoute";
 //Redux
 import { Provider } from "react-redux";
@@ -70,6 +71,8 @@ const App = () => {
                 path="/add-education"
                 component={AddEducation}
               />
+
+              <PrivateRoute exact path="/posts" component={Posts} />
               {/* Route - if we are not login and we type in the url http://localhost:3000/dashboard
               he will take us to dashboard and its worng because we are not log in Authenticated
               <Route exact path="/dashboard" component={Dashboard} /> */}
