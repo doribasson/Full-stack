@@ -2,7 +2,8 @@ import {
   GET_POSTS,
   POST_ERROR,
   UPDATE_LIKES,
-  DELETE_POST
+  DELETE_POST,
+  ADD_POST
 } from "../actions/types";
 
 const initialState = {
@@ -19,6 +20,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         posts: payload, //come from actions post.js file
+        loading: false
+      };
+    case ADD_POST:
+      return {
+        ...state,
+        posts: [payload, ...state.posts], //...state.posts - copy all posts array , adding payload - add new post.. [all togther]
         loading: false
       };
     case DELETE_POST:
