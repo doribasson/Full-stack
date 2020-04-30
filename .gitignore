@@ -1,2 +1,8 @@
+# node_modules will not show in git
 node_modules/
+
+#default.json will not show in git
 config/default.json
+
+#default.json will not show in git
+config/production.json
