@@ -1,6 +1,6 @@
 import axios from "axios";
 
-//when we have a token we will send it to ecery request insted picking and chooseing what request to send it
+//when we have a token we will send it to every request insted picking and chooseing what request to send it
 const setAuthToken = token => {
   //from localStorage
   if (token) {
