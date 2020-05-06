@@ -239,15 +239,16 @@ export const deleteEducation = id => async dispach => {
 
 //Delete account & profile
 //will know the account to delete from the token
-export const deleteAccount = () => async dispach => {
+export const deleteAccount = (id, history) => async dispach => {
   if (window.confirm("Are you sure? This can NOT be undone!")) {
     try {
-      await axios.delete("/api/profile");
+      await axios.delete(`/api/profile/${id}`);
 
       dispach({ type: CLEAR_PROFILE });
       dispach({ type: ACCOUNT_DELETED });
 
       dispach(setAlert("Your account has been permanatly deleted"));
+      history.push("/dashboard");
     } catch (err) {
       dispach({
         type: PROFILE_ERROR,

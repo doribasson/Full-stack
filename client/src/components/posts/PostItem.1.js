@@ -55,15 +55,17 @@ const PostItem = ({
             )}
           </Link>
           {/* user - is the post user .. auth.user._id - is the loged in user* we want to see if those match .. if match we what to show the button*/}
-          {!auth.loading && auth.user.role === "admin" && (
-            <button
-              onClick={e => deletePost(_id)}
-              type="button"
-              className="btn btn-danger"
-            >
-              <i className="fas fa-times"></i>
-            </button>
-          )}
+          {!auth.loading &&
+            (auth.user._id === "5e976f1da365261708240d9e" ||
+              auth.user._id === user) && (
+              <button
+                onClick={e => deletePost(_id)}
+                type="button"
+                className="btn btn-danger"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            )}
         </Fragment>
       )}
     </div>

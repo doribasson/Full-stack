@@ -6,6 +6,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    role: {
+      type: String,
+      default: "basic"
+    },
     email: {
       type: String,
       required: true,
@@ -14,6 +18,11 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true
+    },
+    role: {
+      type: String,
+      default: "basic"
+      // enum: ["basic", "admin"]
     },
     avatar: {
       type: String //attch profile to your email

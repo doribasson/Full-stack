@@ -1,6 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
+import { deleteAccount } from "../../actions/profile";
+import { connect } from "react-redux";
 
 //racfp+tab shortcut
 
@@ -15,12 +17,15 @@ import PropTypes from "prop-types";
 const ProfileItem = ({
   //for use those directly without props...
   profile: {
-    user: { _id, name, avatar }, //like props.profile.user._id but now just _id because destructure
+    user: { _id, name, avatar, role }, //like props.profile.user._id but now just _id because destructure
     status,
     company,
     location,
     skills
-  }
+  },
+  auth,
+  deleteAccount,
+  history
 }) => {
   return (
     <div className="profile bg-light">
@@ -34,6 +39,41 @@ const ProfileItem = ({
         <Link to={`/profile/${_id}`} className="btn btn-primary">
           View Profile
         </Link>
+        <div className="my-2">
+          {auth.isAuthenticated &&
+            auth.loading === false &&
+            auth.user &&
+            auth.user.role === "admin" && (
+              <button
+                className="btn btn-danger"
+                onClick={() => deleteAccount(_id, history)}
+              >
+                <i className="fas fa-user-minus"></i> Delete Account
+              </button>
+            )}
+
+          {auth.isAuthenticated &&
+            auth.loading === false &&
+            auth.user._id === _id &&
+            auth.user &&
+            auth.user.role !== "admin" && (
+              <button
+                className="btn btn-danger"
+                onClick={() => deleteAccount(_id, history)}
+              >
+                <i className="fas fa-user-minus"></i> Delete Account
+              </button>
+            )}
+
+          {/* {auth.user && auth.user.role !== "admin" && auth.user._id === _id && (
+            <button
+              className="btn btn-danger"
+              onClick={() => deleteAccount(_id, history)}
+            >
+              <i className="fas fa-user-minus"></i> Delete Account
+            </button>
+          )} */}
+        </div>
       </div>
       <ul>
         {/* //skills is array and i want just 4 skills */}
@@ -49,7 +89,17 @@ const ProfileItem = ({
 };
 
 ProfileItem.propTypes = {
-  profile: PropTypes.object.isRequired
+  profile: PropTypes.object.isRequired,
+  deleteAccount: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
 };
 
-export default ProfileItem;
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+// export default connect ProfileItem;
+
+export default connect(mapStateToProps, { deleteAccount })(
+  withRouter(ProfileItem)
+);

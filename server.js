@@ -9,6 +9,8 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const path = require("path");
+const ticket_booking = require("./routes/api/ticket_booking");
+const flight_reschedule = require("./routes/api/flight_reschedule");
 
 const app = express();
 
@@ -23,6 +25,8 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/posts", require("./routes/api/posts"));
+app.use("/ticket_booking", ticket_booking);
+app.use("/flight_reschedule", flight_reschedule);
 
 //Serve static assets in production
 if (process.env.NODE_ENV === "production") {

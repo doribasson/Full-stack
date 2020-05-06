@@ -4,7 +4,8 @@ import {
   CLEAR_PROFILE,
   UPDATE_PROFILE,
   GET_PROFILES,
-  GET_REPOS
+  GET_REPOS,
+  ACCOUNT_DELETED
 } from "../actions/types";
 
 const initialState = {
@@ -46,6 +47,15 @@ export default function(state = initialState, action) {
         repos: [],
         loading: false
       };
+    case ACCOUNT_DELETED:
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        isAuthenticated: false,
+        loading: false
+      };
+
     case GET_REPOS:
       return {
         ...state,

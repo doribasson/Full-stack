@@ -15,7 +15,7 @@ router.get("/me", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.user.id
-    }).populate("user", ["name", "avatar"]);
+    }).populate("user", ["name", "avatar", "role"]);
 
     if (!profile) {
       return res.status(400).json({ msg: "There is no profile for this user" });
@@ -62,7 +62,8 @@ router.post(
       facebook,
       twitter,
       instagram,
-      linkedin
+      linkedin,
+      profileImage
     } = req.body;
 
     //Build profile object
@@ -73,6 +74,7 @@ router.post(
     if (location) profileFields.location = location;
     if (bio) profileFields.bio = bio;
     if (status) profileFields.status = status;
+    if (profileImage) profileFields.profileImage = profileImage;
     if (githubusername) profileFields.githubusername = githubusername;
     if (skills) {
       profileFields.skills = skills.split(",").map(skill => skill.trim()); //turn string to array with dlimitter , trim()- no metter if its space or even ten spaces
@@ -126,7 +128,7 @@ router.get("/", async (req, res) => {
   try {
     const profiles = await Profile.find()
       .sort({ date: -1 })
-      .populate("user", ["name", "avatar"]);
+      .populate("user", ["name", "avatar", "role"]);
     res.json(profiles);
   } catch (err) {
     console.error(err.message);
@@ -141,7 +143,7 @@ router.get("/user/:user_id", async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.params.user_id
-    }).populate("user", ["name", "avatar"]);
+    }).populate("user", ["name", "avatar", "role"]);
 
     if (!profile) return res.status(400).json({ msg: "Profile not found" });
 
@@ -362,6 +364,24 @@ router.get("/github/:username", (req, res) => {
       }
       res.json(JSON.parse(body)); //if no parse it will be regular string
     });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    // const profile = await Profile.findOne({ user: req.params.id });
+
+    //remove users posts
+    await Post.deleteMany({ user: req.params.id });
+    //Remove profile
+    await Profile.findOneAndRemove({ user: req.params.id });
+    //Remove user
+    await User.findOneAndRemove({ _id: req.params.id });
+
+    res.json({ msg: "User deleted" });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

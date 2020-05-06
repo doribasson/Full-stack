@@ -48,7 +48,7 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
     <nav className="navbar bg-dark">
       <h1>
         <Link to="/">
-          <i className="fas fa-code"> </i> Full-Stack
+          <i className="fas fa-code"> </i> Social Network
         </Link>
       </h1>
       {/* // if not loading do this {!loading &&() } like   { !loading? '' : null}  just without else = null*/}

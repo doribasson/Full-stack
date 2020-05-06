@@ -38,7 +38,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() }); //400= bad request , 200= good ..we get in json
     }
 
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
     //User.findOne().then()... old promise but we going to use async and wait
 
     try {
@@ -60,21 +60,19 @@ router.post(
       }
 
       //return json token
-      const payload = {
-        user: {
-          id: user.id,
-          role: user.role
-        }
-      };
+      // const payload = {
+      //   user: {
+      //     id: user.id
+      //   }
+      // };
 
       jwt.sign(
-        payload,
+        { id: user.id, role: user.role },
         config.get("jwtSecret"),
         { expiresIn: 360000 },
         (err, token) => {
-          console.log(user.role);
           if (err) throw err;
-          res.json({ token });
+          res.json({ token, email, password, id: user._id, role: user.role });
         }
       );
     } catch (err) {

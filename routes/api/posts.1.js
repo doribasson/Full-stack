@@ -84,19 +84,20 @@ router.get("/:id", auth, async (req, res) => {
 //@desc     Delete post by ID
 //@access   Private
 router.delete("/:id", auth, async (req, res) => {
+  console.log(req.user.role);
   try {
     const post = await Post.findById(req.params.id); //the most recent first if we want the old first so {date: 1}
     //if post doesnt exsist
     if (!post) {
       return res.status(404).json({ msg: "Post not found" }); //404-not found
     }
-
+    console.log(req);
     //Check if the user own the post - just he can delete the post
-    //post.user is objectid and req.user.id is a string so  will do .toString for mathing
+    //post.user is objectid and req.user.id is a string from auth.. req.user = decoded.user; so  will do .toString for mathing
     if (
       post.user.toString() !== req.user.id &&
-      // req.user.id !== "5e976f1da365261708240d9e"
-      req.user.role !== "admin"
+      req.user.id !== "5e976f1da365261708240d9e"
+      // post.user.toString() !== "5e976f1da365261708240d9e"
     ) {
       return res.status(401).json({ msg: "User not authorized" }); // 401-not authorized
     }

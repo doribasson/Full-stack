@@ -40,7 +40,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() }); //400= bad request , 200= good ..we get in json
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
     //User.findOne().then()... old promise but we going to use async and wait
 
     try {
@@ -64,7 +64,7 @@ router.post(
         email,
         avatar,
         password,
-        role: "basic"
+        role
       });
       // Encrypt password
       const salt = await bcrypt.genSalt(10);
@@ -73,19 +73,26 @@ router.post(
       await user.save(); //save to database... user.save() its promise user.save().then().. but we use in async and await
 
       //return json token
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
+      // const payload = {
+      //   user: {
+      //     id: user.id
+      //   }
+      // };
 
       jwt.sign(
-        payload,
+        { id: user.id, role: user.role },
         config.get("jwtSecret"),
         { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
-          res.json({ token });
+          res.json({
+            token: token,
+            name,
+            email,
+            password,
+            role: user.role,
+            id: user._id
+          });
         }
       );
     } catch (err) {
