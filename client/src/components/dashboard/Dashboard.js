@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
@@ -13,7 +13,8 @@ const Dashboard = ({
   getCurrentProfile,
   deleteAccount,
   auth: { user },
-  profile: { profile, loading } //we want the profile and loading from profile object so we destrcture
+  profile: { profile, loading }, //we want the profile and loading from profile object so we destrcture
+  history
 }) => {
   useEffect(() => {
     getCurrentProfile(); //from actions/profile";
@@ -35,7 +36,10 @@ const Dashboard = ({
           <Education education={profile.education} />
 
           <div className="my-2">
-            <button className="btn btn-danger" onClick={() => deleteAccount()}>
+            <button
+              className="btn btn-danger"
+              onClick={() => deleteAccount(user._id, history)}
+            >
               <i className="fas fa-user-minus"></i> Delete My Account
             </button>
           </div>
@@ -65,5 +69,5 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { getCurrentProfile, deleteAccount })(
-  Dashboard
+  withRouter(Dashboard)
 );
