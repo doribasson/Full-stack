@@ -64,6 +64,18 @@ const PostItem = ({
               <i className="fas fa-times"></i>
             </button>
           )}
+
+          {!auth.loading &&
+            auth.user.role !== "admin" &&
+            auth.user._id === user && (
+              <button
+                onClick={e => deletePost(_id)}
+                type="button"
+                className="btn btn-danger"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            )}
         </Fragment>
       )}
     </div>
